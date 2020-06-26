@@ -3,6 +3,7 @@ const socket = io();
 const messageFrom = document.querySelector('.chat-center form');
 const messageInput = document.getElementById('send-msg');
 const messageHistory = document.querySelector('.chat-history');
+const onlineUsers = document.querySelector('.online-users');
 
 const userName = prompt('Your name please !');
 
@@ -11,6 +12,11 @@ const appendMessage = (msgData) => {
     let msgDiv = document.createElement('div');
     msgDiv.innerHTML = msgData;
     messageHistory.appendChild(msgDiv);
+}
+const appendMessageToOnlineUserList = (msgData) => {
+    let msgDiv = document.createElement('div');
+    msgDiv.innerHTML = msgData;
+    onlineUsers.appendChild(msgDiv);
 }
 
 // Call the function
@@ -25,6 +31,12 @@ socket.on('user-connected' , (userName) => {
 });
 socket.on('user-disconnected' , (userName) => {
     appendMessage(`<b>${userName}</b> is disconnected`);
+});
+socket.on('get-online-users' , (userList) => {
+    console.log('userList',userList);
+    for(let i = 0; i < userList.length; i++){
+        appendMessageToOnlineUserList(userList[i]);
+    }
 });
 
 // Msg sending by emit method of socket
